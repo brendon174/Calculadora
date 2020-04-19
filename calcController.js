@@ -26,11 +26,14 @@ class CalcController {
 
     // metodo com array onde forEach percorre todo array 
     addEventListenerAll(element, events, fn){
-
+               
+        
             events.split(' ').forEach(event =>{
              
                element.addEventListener(event, fn, false);
-
+               
+               
+              
             });   
     }
     // metodo apagar tudo. zerar o array
@@ -61,9 +64,10 @@ class CalcController {
 
      // busca valor comparado dentro do  array.
      // se for maior que -1 retorna 0 ou + senao -1
-    isOperation(){
+    isOperation(value){
         
         return  (['+','-','*','/','%'].indexOf(value) > -1)
+        
     }
    
     addOperation(value){
@@ -77,7 +81,7 @@ class CalcController {
             if(this.isOperation(value)){
 
                 // ultimo item sera igual ao operador do momento
-                this.setLastOperation(value);
+                this._setLastOperation(value);
 
             }else if (isNaN(value)) {
                     //outra coisa 
@@ -90,8 +94,9 @@ class CalcController {
             let newValue = this.getLastOperation().toString() + value.toString();  
             this.setLastOperation(parseInt(newValue));
             }
-        
-            console.log(typeof(this._operation));
+            console.log(value);
+            console.log(this._operation);
+          
         
         
     }
@@ -168,17 +173,22 @@ class CalcController {
             // aqui ele escuta a opçao click e arrasta. 
              this.addEventListenerAll(btn,"click drag", e =>{
 
-                 console.log(btn.className.baseVal.replace("btn-",""));
+                 this.execBtn(btn.className.baseVal.replace("btn-", ""));
+                 
              });
+             
 
             //aqui transforma o mouse em um dedinho para clicar nos links
              this.addEventListenerAll(btn,  "mouseover mouseup mousedown", e => {
                  
                  btn.style.cursor = "pointer";
-
+                 
              });
 
+             
+               
          });
+         
 
     }
 //       esse metodo é chamado para mostrar data e hora atual de acordo com a localização do usuario
