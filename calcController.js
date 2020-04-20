@@ -22,6 +22,8 @@ class CalcController {
         this.setDisplayDateTime();
 
         }, 1000);
+
+        this.setLastNumberToDisplay();
     } 
 
     // metodo com array onde forEach percorre todo array 
@@ -40,12 +42,14 @@ class CalcController {
     clearAll(){
 
         this._operation = [ ];
+        this.setLastNumberToDisplay();
 
     }
     // metodo para zerar a ultima entrada 
     clearEntry(){
 
         this._operation.pop();
+        this.setLastNumberToDisplay();
 
     }
     // tras o valor da ultima posição
@@ -69,11 +73,66 @@ class CalcController {
         return  (['+','-','*','/','%'].indexOf(value) > -1)
         
     }
+    pushOperation(value){
+          
+        this._operation.push(value);
+        if (this._operation.length > 3){
+            
+            this.calc();
+        }
+          
+    }
+
+    // exclui o ultimo numero, junta os numeros no array e atualiza o display
+    calc(){
+
+        let last = '';
+
+        if (this._operation.length > 3 ){
+            last = this._operation.pop();
+        }
+        
+        let result = eval(this._operation.join(""));
+
+        if (last == '%'){
+            
+            result /=  100;
+
+            this._operation = [result];
+
+        }else{
+
+            this._operation = [result];
+
+            if (last) this._operation.push(last);
+            }
+
+        this.setLastNumberToDisplay();
+    }
    
+
+    setLastNumberToDisplay(){
+
+         let lastNumber;
+
+        for (let i = this._operation.length-1; i >=0; i--){
+            
+            //senao for um operador entao achou o numero
+            if (!this.isOperation(this._operation[i])){
+                lastNumber = this._operation[i];
+                break;
+            }
+        }
+
+        if (!lastNumber)  lastNumber = 0;
+
+         this.displayCalc = lastNumber;
+    }
+
+
     addOperation(value){
            
-        // imprimindo o valor de getlast
-            console.log('A', isNaN(this.getLastOperation()))
+       
             //se for uma string ele cai aqui SENAO 
             if (isNaN(this.getLastOperation())){
 
@@ -81,21 +140,33 @@ class CalcController {
             if(this.isOperation(value)){
 
                 // ultimo item sera igual ao operador do momento
-                this._setLastOperation(value);
+                this.setLastOperation(value);
 
             }else if (isNaN(value)) {
-                    //outra coisa 
-                    console.log(value);
+                    
+                    console.log('outra coisa',value);
             }else{
-                this._operation.push(value);
+                this.pushOperation(value);
+                this.setLastNumberToDisplay();
             }
 
             }else{
-            let newValue = this.getLastOperation().toString() + value.toString();  
-            this.setLastOperation(parseInt(newValue));
+
+                if(this.isOperation(value)){
+
+                    this.pushOperation(value);
+
+                }else{
+
+                    let newValue = this.getLastOperation().toString() + value.toString();  
+                    this.setLastOperation(parseInt(newValue));
+                    
+                    //atualizando display
+                    this.setLastNumberToDisplay();
+                }
+
             }
-            console.log(value);
-            console.log(this._operation);
+            
           
         
         
@@ -136,6 +207,8 @@ class CalcController {
                 break;
                 
             case 'igual':
+
+                    this.calc();
                 
                 break
 
